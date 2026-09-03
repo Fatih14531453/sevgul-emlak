@@ -432,6 +432,8 @@
         }
       }
       if (html) grid.innerHTML = html;
+      const countEl = document.getElementById('listing-count');
+if (countEl) countEl.textContent = `${items.length < 10 ? '0' : ''}${items.length} kayıt`;
     } catch (err) {}
   }
 
