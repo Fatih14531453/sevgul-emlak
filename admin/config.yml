@@ -1,0 +1,33 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  # İLANLAR BÖLÜMÜ
+  - name: "ilanlar"
+    label: "İlanlar"
+    folder: "content/ilanlar"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "İlan Başlığı", name: "title", widget: "string" }
+      - { label: "Fiyat (TL)", name: "fiyat", widget: "string" }
+      - { label: "Metrekare (m²)", name: "metrekare", widget: "string" }
+      - { label: "İlan Fotoğrafı", name: "image", widget: "image" }
+      - { label: "Açıklama", name: "aciklama", widget: "text" }
+
+  # SİTE GENEL AYARLARI BÖLÜMÜ
+  - name: "ayarlar"
+    label: "Site Genel Ayarları"
+    files:
+      - file: "content/ayarlar.json"
+        label: "Site Bilgileri"
+        name: "site_bilgileri"
+        fields:
+          - { label: "Site Başlığı (Title)", name: "site_title", widget: "string", default: "Emlak Gayrimenkul" }
+          - { label: "Slogan / Alt Başlık", name: "site_slogan", widget: "string" }
+          - { label: "İletişim Telefonu", name: "telefon", widget: "string" }
+          - { label: "WhatsApp Numarası", name: "whatsapp", widget: "string" }
