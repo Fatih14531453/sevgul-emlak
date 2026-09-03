@@ -376,7 +376,7 @@
 </script>
 <!-- Decap CMS Bağlantı Skriptleri -->
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/front-matter@4.0.2/front-matter.user.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/front-matter-browser@1.0.0/front-matter.min.js"></script>
 
 <script>
   // 1. Ayarları Yükle (content/ayarlar.json)
@@ -412,8 +412,21 @@
       if (file.name.endsWith('.md')) {
         const rawRes = await fetch(file.download_url);
         const rawText = await rawRes.text();
-        const parsed = window.frontMatter(rawText);
-        const d = parsed.attributes;
+        
+        let d = {};
+        if (typeof window.frontMatter === 'function') {
+          d = window.frontMatter(rawText).attributes || {};
+        } else {
+          const lines = rawText.split('\n');
+          lines.forEach(line => {
+            const parts = line.split(':');
+            if (parts.length >= 2) {
+              const key = parts[0].trim();
+              const val = parts.slice(1).join(':').trim().replace(/^["']|["']$/g, '');
+              if (key && val) d[key] = val;
+            }
+          });
+        }
 
         count++;
         html += `
