@@ -396,46 +396,51 @@
 
   // 2. İlanları Klasörden Çek ve Tasarıma Bas
   async function loadListings() {
-    const grid = document.querySelector('#listings-container') || document.querySelector('.grid');
-    if (!grid) return;
+  const grid = document.getElementById('listings-grid') || document.querySelector('.grid');
+  if (!grid) return;
 
-    try {
-      const pathSegments = window.location.pathname.split('/').filter(Boolean);
-      const apiUrl = `https://api.github.com/repos/${window.location.hostname.includes('github.io') ? pathSegments[0] + '/' + pathSegments[1] : 'USERNAME/REPO'}/contents/content/ilanlar`;
-      
-      const res = await fetch(apiUrl);
-      if (!res.ok) return;
-      
-      const files = await res.json();
-      let html = '';
+  try {
+    const apiUrl = 'https://api.github.com/repos/Fatih14531453/sevgul-emlak/contents/content/listings';
+    const res = await fetch(apiUrl);
+    if (!res.ok) return;
 
-      for (const file of files) {
-        if (file.name.endsWith('.md')) {
-          const rawRes = await fetch(file.download_url);
-          const rawText = await rawRes.text();
-          const parsed = window.frontMatter(rawText);
-          const d = parsed.attributes;
+    const files = await res.json();
+    let html = '';
+    let count = 0;
 
-          html += `
-            <div class="rounded-2xl overflow-hidden bg-stone-100 border border-stone-200">
-              <div class="relative h-64 bg-stone-300">
-                <img src="${d.image || ''}" class="w-full h-full object-cover">
-                <span class="absolute top-4 left-4 bg-stone-900 text-white text-xs px-3 py-1 rounded-full uppercase tracking-wider">${d.kategori || 'İlan'}</span>
-              </div>
-              <div class="p-6">
-                <p class="text-xs text-stone-500 mb-1">${d.konum || 'Eskişehir'}</p>
-                <h3 class="text-xl font-serif text-stone-900 mb-2">${d.title}</h3>
-                <p class="text-lg font-bold text-stone-800">${d.fiyat ? d.fiyat + ' TL' : ''}</p>
-              </div>
+    for (const file of files) {
+      if (file.name.endsWith('.md')) {
+        const rawRes = await fetch(file.download_url);
+        const rawText = await rawRes.text();
+        const parsed = window.frontMatter(rawText);
+        const d = parsed.attributes;
+
+        count++;
+        html += `
+          <div class="rounded-2xl overflow-hidden bg-stone-100 border border-stone-200">
+            <div class="relative h-64 bg-stone-300">
+              <img src="${d.image || ''}" class="w-full h-full object-cover">
+              <span class="absolute top-4 left-4 bg-stone-900 text-white text-xs px-3 py-1 rounded-full uppercase tracking-wider">${d.kategori || 'İlan'}</span>
             </div>
-          `;
-        }
+            <div class="p-6">
+              <p class="text-xs text-stone-500 mb-1">${d.konum || 'Eskişehir'}</p>
+              <h3 class="text-xl font-serif text-stone-900 mb-2">${d.title || ''}</h3>
+              <p class="text-lg font-bold text-stone-800">${d.fiyat ? d.fiyat + ' TL' : ''}</p>
+            </div>
+          </div>
+        `;
       }
-      if (html) grid.innerHTML = html;
-      const countEl = document.getElementById('listing-count');
-if (countEl) countEl.textContent = `${items.length < 10 ? '0' : ''}${items.length} kayıt`;
-    } catch (err) {}
+    }
+
+    if (html) grid.innerHTML = html;
+
+    const countEl = document.getElementById('listing-count');
+    if (countEl) countEl.textContent = `${count < 10 ? '0' : ''}${count} kayıt`;
+
+  } catch (err) {
+    console.error('İlanlar yüklenirken hata oluştu:', err);
   }
+}
 
   loadSettings();
   loadListings();
