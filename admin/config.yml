@@ -23,6 +23,7 @@ collections:
         widget: "list"
         field: { label: "Görsel", name: "image", widget: "image" }
       - { label: "Açıklama", name: "aciklama", widget: "text", required: false }
+      - { label: "Harita Linki (Google Maps)", name: "harita", widget: "string", required: false }
 
   # SİTE GENEL AYARLARI BÖLÜMÜ
   - name: "ayarlar"
