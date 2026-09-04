@@ -15,9 +15,14 @@ collections:
     fields:
       - { label: "İlan Başlığı", name: "title", widget: "string" }
       - { label: "Fiyat (TL)", name: "fiyat", widget: "string" }
-      - { label: "Metrekare (m²)", name: "metrekare", widget: "string" }
-      - { label: "İlan Fotoğrafı", name: "image", widget: "image" }
-      - { label: "Açıklama", name: "aciklama", widget: "text" }
+      - { label: "Metrekare (m²)", name: "metrekare", widget: "string", required: false }
+      - { label: "Konum", name: "konum", widget: "string", default: "Eskişehir" }
+      - { label: "Kategori", name: "kategori", widget: "select", options: ["Satılık", "Kiralık", "İş Yeri"], default: "Satılık" }
+      - label: "İlan Fotoğrafları"
+        name: "images"
+        widget: "list"
+        field: { label: "Görsel", name: "image", widget: "image" }
+      - { label: "Açıklama", name: "aciklama", widget: "text", required: false }
 
   # SİTE GENEL AYARLARI BÖLÜMÜ
   - name: "ayarlar"
