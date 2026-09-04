@@ -345,6 +345,10 @@
   </div>
 </footer>
 
+<!-- Decap CMS & YAML Parser Kütüphaneleri -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+
 <script>
   // Mobile menu toggle
   var menuToggle = document.getElementById('menu-toggle');
@@ -371,13 +375,7 @@
       contactForm.reset();
     });
   }
-</script>
 
-<!-- Decap CMS Bağlantı Skriptleri -->
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/front-matter-browser@1.0.0/front-matter.min.js"></script>
-
-<script>
   // Slider Fotoğraf Geçiş Fonksiyonları
   function nextSlide(btn) {
     const card = btn.closest('.relative');
@@ -435,33 +433,30 @@
           let d = {};
           let bodyText = '';
 
-          if (typeof window.frontMatter === 'function') {
-            const fm = window.frontMatter(rawText);
-            d = fm.attributes || {};
-            bodyText = fm.body || '';
-          } else {
-            const lines = rawText.split('\n');
-            lines.forEach(line => {
-              const parts = line.split(':');
-              if (parts.length >= 2) {
-                const key = parts[0].trim();
-                const val = parts.slice(1).join(':').trim().replace(/^["']|["']$/g, '');
-                if (key && val) d[key] = val;
-              }
-            });
+          // Front-matter ve YAML ayrıştırma
+          const parts = rawText.split(/^---\s*$/m);
+          if (parts.length >= 3) {
+            try {
+              d = jsyaml.load(parts[1]) || {};
+              bodyText = parts.slice(2).join('---').trim();
+            } catch (e) {
+              console.error('YAML parse hatası:', e);
+            }
           }
 
-          // Resim listesini normalize et (tek resim mi yoksa çoklu mu)
+          // Resim listesini normalize et
           let imageList = [];
-          if (d.images && Array.isArray(d.images)) {
+          if (Array.isArray(d.images)) {
             imageList = d.images;
-          } else if (d.images && typeof d.images === 'string') {
+          } else if (typeof d.images === 'string' && d.images.trim()) {
             imageList = d.images.split(',').map(s => s.trim());
-          } else if (d.image) {
+          } else if (Array.isArray(d.image)) {
+            imageList = d.image;
+          } else if (typeof d.image === 'string' && d.image.trim()) {
             imageList = [d.image];
           }
 
-          // Resim HTML'lerini üret
+          // Resim HTML'lerini oluştur
           let imgHtml = '';
           if (imageList.length > 0) {
             imageList.forEach((imgSrc, idx) => {
@@ -471,7 +466,7 @@
             imgHtml = `<div class="w-full h-full bg-stone-300 flex items-center justify-center text-stone-500 text-xs">Görsel Yok</div>`;
           }
 
-          // Ok Butonları (Eğer 1'den fazla resim varsa)
+          // Çoklu resim kontrol okları
           let controlsHtml = '';
           if (imageList.length > 1) {
             controlsHtml = `
@@ -484,8 +479,7 @@
             `;
           }
 
-          // Açıklama metnini belirle
-          const description = d.aciklama || bodyText.trim() || '';
+          const description = d.aciklama || bodyText || '';
 
           count++;
           html += `
