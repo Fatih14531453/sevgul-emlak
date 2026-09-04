@@ -8,6 +8,9 @@ images:
   - /images/uploads/sevgülemlakilan1.jpg
   - /images/uploads/sevgülemlakilan2.jpg
 aciklama: |-
-  aasdfasdfasdf
-  sadfasdfasdf
+  Şirintepde geniş
+  lüks
+  2+1
+  kaloriferli
+  0 bina
 ---
